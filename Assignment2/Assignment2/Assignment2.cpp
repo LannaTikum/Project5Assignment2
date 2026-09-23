@@ -1,5 +1,5 @@
 // Project V - Assignment #2: Debugging vs Release Coding Practice
-// Step #3: Initial Source Code - read StudentData.txt, store into vector
+// Step #4: Adding in some _DEBUG functionality
 
 #include <iostream>
 #include <fstream>
@@ -64,8 +64,15 @@ int main()
 
     inFile.close();
 
-    // At this point, "students" holds every parsed student object.
-    // No screen output yet - that gets added in Step #4 under _DEBUG.
+#ifdef _DEBUG
+    // Only compiled in when Visual Studio's Solution Configuration = Debug.
+    // Prints out all loaded student info to the console for debugging.
+    std::cout << "--- DEBUG: Loaded " << students.size() << " students ---" << std::endl;
+    for (const auto& s : students)
+    {
+        std::cout << s.firstName << " " << s.lastName << std::endl;
+    }
+#endif
 
     return 0;
 }
