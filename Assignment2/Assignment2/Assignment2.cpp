@@ -1,5 +1,4 @@
 // Project V - Assignment #2: Debugging vs Release Coding Practice
-// Step #4: Adding in some _DEBUG functionality
 
 #include <iostream>
 #include <fstream>
@@ -11,7 +10,7 @@ struct STUDENT_DATA
 {
     std::string firstName;
     std::string lastName;
-    std::string email;
+    std::string email;   // only populated in PRE_RELEASE builds
 };
 
 // Splits a "First,Last" or "First,Last,email" line on commas
@@ -31,7 +30,19 @@ static std::vector<std::string> splitLine(const std::string& line)
 
 int main()
 {
+    // Step 5.2: message stating standard vs pre-release
+#ifdef PRE_RELEASE
+    std::cout << "Running: PRE-RELEASE version" << std::endl;
+#else
+    std::cout << "Running: STANDARD version" << std::endl;
+#endif
+
+    // Step 5.3: read the emails file instead, only when PRE_RELEASE is defined
+#ifdef PRE_RELEASE
+    const std::string fileName = "StudentData_Emails.txt";
+#else
     const std::string fileName = "StudentData.txt";
+#endif
 
     std::vector<STUDENT_DATA> students;
     std::ifstream inFile(fileName);
@@ -59,6 +70,13 @@ int main()
             student.lastName = parts[1];
         }
 
+#ifdef PRE_RELEASE
+        if (parts.size() >= 3)
+        {
+            student.email = parts[2];
+        }
+#endif
+
         students.push_back(student);
     }
 
@@ -66,11 +84,14 @@ int main()
 
 #ifdef _DEBUG
     // Only compiled in when Visual Studio's Solution Configuration = Debug.
-    // Prints out all loaded student info to the console for debugging.
     std::cout << "--- DEBUG: Loaded " << students.size() << " students ---" << std::endl;
     for (const auto& s : students)
     {
-        std::cout << s.firstName << " " << s.lastName << std::endl;
+        std::cout << s.firstName << " " << s.lastName;
+#ifdef PRE_RELEASE
+        std::cout << " (" << s.email << ")";
+#endif
+        std::cout << std::endl;
     }
 #endif
 
